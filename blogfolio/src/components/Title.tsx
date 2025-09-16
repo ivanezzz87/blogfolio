@@ -10,9 +10,12 @@ background-color: #fff;
 const TitleContent = styled.h2`
 color: #000;
 `
-const Title: React.FC = () => {
+interface ITitle {
+    text: string
+}
+const Title: React.FC<ITitle> = ({text}) => {
     return <TitleContainer>
-        <TitleContent>SingIn</TitleContent>
+        <TitleContent>{text}</TitleContent>
     </TitleContainer>;
 };
 export default Title;

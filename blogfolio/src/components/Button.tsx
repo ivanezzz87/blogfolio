@@ -6,6 +6,25 @@ interface IButton {
     state: 'enabled' | 'disabled';
     onClick: () => void
 }
+    ;
+const Button: React.FC<IButton> = ({ content, type, state, onClick }) => {
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        if (state !== 'disabled') {
+            onClick();
+        }
+    };
+    return (
+        <StyledButton
+            buttontype={type}
+            buttonstate={state}
+            onClick={handleClick}
+            disabled={state === 'disabled'}
+        >
+            {content}
+        </StyledButton>
+    );
+};
 const StyledButton = styled.button<{
     buttontype: 'primary' | 'secondary' | 'secondary2';
     buttonstate: 'enabled' | 'disabled'
@@ -62,24 +81,4 @@ const StyledButton = styled.button<{
         return '';
     }}
  `
-
-    ;
-const Button: React.FC<IButton> = ({ content, type, state, onClick }) => {
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        if (state !== 'disabled') {
-            onClick();
-        }
-    };
-    return (
-        <StyledButton
-            buttontype={type}
-            buttonstate={state}
-            onClick={handleClick}
-            disabled={state === 'disabled'}
-        >
-            {content}
-        </StyledButton>
-    );
-};
 export default Button;

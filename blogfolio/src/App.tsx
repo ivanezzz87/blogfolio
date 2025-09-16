@@ -39,7 +39,9 @@ function App() {
         />
       </div>
       <div className="title-container">
-        <Title></Title>
+        <Title
+          text = "SignIn"
+        />
       </div>
       <div className="burger-container">
                 <BurgerMenu isOpen={isMenuOpen} onClick={toggleMenu} />
