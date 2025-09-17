@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface BurgerMenuProps {
-  isOpen: boolean;
+  $isOpen: boolean;
   onClick: () => void;
 }
 
@@ -50,13 +50,13 @@ const BurgerLine = styled.div<{ isOpen: boolean }>`
   }
 `;
 
-const BurgerMenu: React.FC<BurgerMenuProps> = ({ isOpen, onClick }) => {
+const BurgerMenu: React.FC<BurgerMenuProps> = ({ $isOpen, onClick }) => {
   return (
     <>
-      <BurgerButton isOpen={isOpen} onClick={onClick}>
-        <BurgerLine isOpen={isOpen} />
-        <BurgerLine isOpen={isOpen} />
-        <BurgerLine isOpen={isOpen} />
+      <BurgerButton isOpen={$isOpen} onClick={onClick}>
+        <BurgerLine isOpen={$isOpen} />
+        <BurgerLine isOpen={$isOpen} />
+        <BurgerLine isOpen={$isOpen} />
       </BurgerButton>
     </>
   );

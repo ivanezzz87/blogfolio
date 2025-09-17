@@ -44,7 +44,7 @@ function App() {
         />
       </div>
       <div className="burger-container">
-                <BurgerMenu isOpen={isMenuOpen} onClick={toggleMenu} />
+                <BurgerMenu $isOpen={isMenuOpen} onClick={toggleMenu} />
       </div>
     </div>
   );
