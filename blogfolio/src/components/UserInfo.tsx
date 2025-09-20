@@ -7,11 +7,9 @@ interface IUserInfo {
     children?: React.ReactNode;
 }
 const StyledUserContainer = styled.div`
-padding: 20px;
-border-radius: 3px;
-max-width: fit-content;
-margin-top: 10px;
-background-color: #535bf2;
+padding: 10px 15px;
+max-width: 300px;
+background-color: #2231AA;
 display: flex;
 column-gap: 20px;
 `

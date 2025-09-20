@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-
+import React from "react";
+import styled from "styled-components";
+import UserInfo from "./UserInfo";
 interface BurgerMenuProps {
   $isOpen: boolean;
   onClick: () => void;
@@ -28,28 +28,99 @@ const BurgerButton = styled.button<{ isOpen: boolean }>`
 const BurgerLine = styled.div<{ isOpen: boolean }>`
   width: 30px;
   height: 3px;
-  background: ${props => props.isOpen ? '#fff' : '#fff'};
+  background: ${(props) => (props.isOpen ? "#fff" : "#fff")};
   border-radius: 5px;
   transition: all 0.3s ease;
   position: absolute;
 
   &:nth-child(1) {
-    top: ${props => props.isOpen ? '50%' : '25%'};
-    transform: ${props => props.isOpen ? 'translateY(-50%) rotate(45deg)' : 'none'};
+    top: ${(props) => (props.isOpen ? "50%" : "25%")};
+    transform: ${(props) =>
+      props.isOpen ? "translateY(-50%) rotate(45deg)" : "none"};
   }
 
   &:nth-child(2) {
     top: 50%;
     transform: translateY(-50%);
-    opacity: ${props => props.isOpen ? 0 : 1};
+    opacity: ${(props) => (props.isOpen ? 0 : 1)};
   }
 
   &:nth-child(3) {
-    top: ${props => props.isOpen ? '50%' : '75%'};
-    transform: ${props => props.isOpen ? 'translateY(-50%) rotate(-45deg)' : 'none'};
+    top: ${(props) => (props.isOpen ? "50%" : "75%")};
+    transform: ${(props) =>
+      props.isOpen ? "translateY(-50%) rotate(-45deg)" : "none"};
   }
 `;
+// const CloseButton = styled.button<{ isOpen: boolean }>`
+//   position: absolute;
+//   top: 20px;
+//   right: 20px;
+//   width: 40px;
+//   height: 40px;
+//   background: transparent;
+//   border: none;
+//   cursor: pointer;
+//   z-index: 15;
+//   display: ${(props) => (props.isOpen ? "block" : "none")};
 
+//   &::before {
+//     transform: translate(-50%, -50%) rotate(45deg);
+//   }
+
+//   &::after {
+//     transform: translate(-50%, -50%) rotate(-45deg);
+//   }
+
+//   &:hover::before,
+//   &:hover::after {
+//     background: #ff6b6b;
+//   }
+// `;
+
+const MenuOverlay = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 84px;
+  left: 0;
+  width: 236px;
+  height: 100%;
+  background: #fff;
+  display: ${(props) => (props.isOpen ? "flex" : "none")};
+  flex-direction: row;
+  z-index: 5;
+  transition: opacity 0.3s ease;
+`;
+const NavContainer = styled.nav`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+const MenuItem = styled.a`
+  color: black;
+  text-decoration: none;
+  padding: 20px 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  border-bottom: 1px solid lightgray;
+  &:hover {
+    color: #2231AA;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 10px;
+    height: 2px;
+    background: #ff6b6b;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+`;
 const BurgerMenu: React.FC<BurgerMenuProps> = ({ $isOpen, onClick }) => {
   return (
     <>
@@ -58,8 +129,24 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ $isOpen, onClick }) => {
         <BurgerLine isOpen={$isOpen} />
         <BurgerLine isOpen={$isOpen} />
       </BurgerButton>
+      <MenuOverlay isOpen={$isOpen}>
+        {/* <CloseButton
+          isOpen={$isOpen}
+          onClick={onClick}
+          aria-label="Закрыть меню"
+        /> */}
+
+        <NavContainer>
+          <UserInfo firstName="Ivan" lastName="Dudko" />
+          <MenuItem href="#about" onClick={onClick}>
+            Home
+          </MenuItem>
+          <MenuItem href="#services" onClick={onClick}>
+            Add post
+          </MenuItem>
+        </NavContainer>
+      </MenuOverlay>
     </>
   );
 };
-
 export default BurgerMenu;

@@ -5,7 +5,6 @@ padding: 20px;
 border-radius: 3px;
 max-width: fit-content;
 margin-top: 10px;
-background-color: #fff;
 `
 const TitleContent = styled.h2`
 color: #000;

@@ -35,7 +35,7 @@ const StyledButton = styled.button<{
     font-size: 16px;
     font-weight: 500;
     transition: all 0.2s ease;
-    min-width: 120px;
+    width: 300px;
     cursor: ${props => props.buttonstate === 'disabled' ? 'not-allowed' : 'pointer'};
         ${props => {
         if (props.buttontype === 'primary') {

@@ -55,7 +55,6 @@ const InputContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   width: fit-content;
-  background-color: lightgray;
   padding: 10px;
 `;
 const StyledLabel = styled.label<{ $disabled?: boolean }>`

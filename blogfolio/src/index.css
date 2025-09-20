@@ -14,11 +14,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  
 } 
 .buttons-container {
   height: 50px;
   display: flex;
   column-gap: 30px;
+}
+body {
+  background-color: #E8E8E8;
 }
 .burger-container {
   background-color: #535bf2;
