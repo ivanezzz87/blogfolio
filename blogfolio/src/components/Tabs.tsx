@@ -1,65 +1,88 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
-const TabsComponent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number>(0);
+export interface Tab {
+  label: string;
+  value: string;
+  content?: React.ReactNode;
+}
 
-  const tabs = [
-    { label: "All", content: "" },
-    { label: "My favorites", content: "" },
-    { label: "Popular", content: "" },
-  ];
+interface TabsProps {
+  tabs: Tab[];
+  activeTab: string;
+  onTabChange: (tabValue: string) => void;
+  className?: string;
+}
 
+const TabsComponent: React.FC<TabsProps> = ({
+  tabs,
+  activeTab,
+  onTabChange,
+  className
+}) => {
   return (
-    <TabsContainer>
+    <TabsContainer className={className}>
       <TabHeaders>
-        {tabs.map((tab, index) => (
+        {tabs.map((tab) => (
           <TabButton
-            key={index}
-            active={activeTab === index}
-            onClick={() => setActiveTab(index)}
+            key={tab.value}
+            active={activeTab === tab.value}
+            onClick={() => onTabChange(tab.value)}
           >
             {tab.label}
           </TabButton>
         ))}
       </TabHeaders>
-      <TabContent>{tabs[activeTab].content}</TabContent>
     </TabsContainer>
   );
 };
+
 const TabsContainer = styled.div`
   width: 100%;
-  max-width: 600px;
   overflow: hidden;
-  margin-top: 20px;
+  margin-bottom: 30px;
 `;
 
 const TabHeaders = styled.div`
   display: flex;
   background-color: #fff;
+  border-bottom: 2px solid #e0e0e0;
+  gap: 0;
 `;
 
 const TabButton = styled.button<{ active: boolean }>`
-  flex: 1;
-  padding: 10px;
-  color: "black";
+  padding: 12px 24px;
+  color: ${(props) => (props.active ? "#2231AA" : "#8D8E97")};
   border: none;
-  background-color: #fff;
-  border-bottom: 2px solid ${(props) => (props.active ? "#000" : "#fff")};
+  border-bottom: 2px solid ${(props) => (props.active ? "#2231AA" : "transparent")};
   cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:last-child {
-    border-right: none;
-  }
+  transition: all 0.3s ease;
+  font-weight: ${(props) => (props.active ? "600" : "400")};
+  font-size: 16px;
+  white-space: nowrap;
+  min-width: 120px;
 
   &:hover {
-    color: blue;
+    color: #2231AA;
+    background-color: ${(props) => (props.active ? "#fff" : "#f8f9ff")};
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-width: auto;
+    flex: 1;
   }
 `;
 
-const TabContent = styled.div`
-  padding: 20px;
-  background-color: white;
-`;
 export default TabsComponent;
