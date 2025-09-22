@@ -51,31 +51,6 @@ const BurgerLine = styled.div<{ isOpen: boolean }>`
       props.isOpen ? "translateY(-50%) rotate(-45deg)" : "none"};
   }
 `;
-// const CloseButton = styled.button<{ isOpen: boolean }>`
-//   position: absolute;
-//   top: 20px;
-//   right: 20px;
-//   width: 40px;
-//   height: 40px;
-//   background: transparent;
-//   border: none;
-//   cursor: pointer;
-//   z-index: 15;
-//   display: ${(props) => (props.isOpen ? "block" : "none")};
-
-//   &::before {
-//     transform: translate(-50%, -50%) rotate(45deg);
-//   }
-
-//   &::after {
-//     transform: translate(-50%, -50%) rotate(-45deg);
-//   }
-
-//   &:hover::before,
-//   &:hover::after {
-//     background: #ff6b6b;
-//   }
-// `;
 
 const MenuOverlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -130,12 +105,6 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ $isOpen, onClick }) => {
         <BurgerLine isOpen={$isOpen} />
       </BurgerButton>
       <MenuOverlay isOpen={$isOpen}>
-        {/* <CloseButton
-          isOpen={$isOpen}
-          onClick={onClick}
-          aria-label="Закрыть меню"
-        /> */}
-
         <NavContainer>
           <UserInfo firstName="Ivan" lastName="Dudko" />
           <MenuItem href="#about" onClick={onClick}>
