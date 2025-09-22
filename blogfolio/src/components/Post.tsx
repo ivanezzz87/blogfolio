@@ -69,7 +69,7 @@ const PostContentContainer = styled.div`
   margin-bottom: 15px;
 `;
 
-const PostImage = styled.img`
+const PostImage = styled.img<{ isOpen?: boolean }>`
   object-fit: cover;
 `;
 

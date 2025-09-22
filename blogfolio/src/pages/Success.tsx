@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import Button from "../components/Button";
 import Title from "../components/Title";
 export const Success: React.FC = () => {
@@ -20,7 +20,6 @@ export const Success: React.FC = () => {
           onClick={() => console.log("Sign in")}
         />
       </Container>
-      ;
     </div>
   );
 };

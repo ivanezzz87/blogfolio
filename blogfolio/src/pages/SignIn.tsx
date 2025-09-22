@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Title from "../components/Title";
@@ -33,7 +33,6 @@ export const SignIn: React.FC = () => {
           onClick={() => console.log("Sign in")}
         />
       </Container>
-      ;
     </div>
   );
 };
