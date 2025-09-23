@@ -16,7 +16,7 @@ const Input: React.FC<IInput> = ({
   type,
   placeholder,
   value,
-  disabled,
+  disabled = false,
   label,
   id,
   isError = false,

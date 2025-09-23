@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.css";
 import "./components/Button";
-import PostsPage from "./pages/AllPosts";
+import { SignIn } from "./pages/SignIn";
 function App() {
   return (
     <div className="root-container">
-      <PostsPage />
+      <SignIn />
     </div>
   );
 }

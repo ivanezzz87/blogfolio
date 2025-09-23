@@ -4,9 +4,10 @@ const TitleContainer = styled.div`
 padding: 20px;
 border-radius: 3px;
 max-width: fit-content;
-margin-top: 10px;
+margin-left: 10%;
 `
 const TitleContent = styled.h2`
+font-size: 32px;
 color: #000;
 `
 interface ITitle {
