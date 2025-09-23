@@ -1,0 +1,54 @@
+import React from "react";
+import styled from "styled-components";
+import Header from "../components/Header";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import Title from "../components/Title";
+export const SignIn: React.FC = () => {
+  return (
+    <div>
+      <Header />
+      <BackToHome href="/">Back to home</BackToHome>
+      <Title text="Sign in" />
+      <Container>
+        <Input
+          type="email"
+          value=""
+          label="Email"
+          id="email"
+          onChange={() => console.log("email")}
+        />
+        <Input
+          type="password"
+          value=""
+          label="Password"
+          id="password"
+          onChange={() => console.log("password")}
+        />
+        <a href="#">Forgot password?</a>
+        <Button
+          content="Sign in"
+          type="primary"
+          state="enabled"
+          onClick={() => console.log("Sign in")}
+        />
+      </Container>
+    </div>
+  );
+};
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 20px;
+  margin: 0 auto;
+  height: 500px;
+  width: 500px;
+  border: 1px solid lightgray;
+`;
+const BackToHome = styled.a`
+  text-decoration: none;
+  color: #000;
+  font-size: 16px;
+`;
