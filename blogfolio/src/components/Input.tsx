@@ -9,7 +9,7 @@ interface IInput {
   label?: string;
   id?: string;
   isError?: boolean;
-  textError?: string
+  textError?: string;
   onChange: (value: string) => void;
 }
 const Input: React.FC<IInput> = ({
@@ -42,11 +42,7 @@ const Input: React.FC<IInput> = ({
         onChange={handleChange}
         $isError={isError}
       />
-      {isError && textError && (
-        <Error>
-          {textError}
-        </Error>
-      )}
+      {isError && textError && <Error>{textError}</Error>}
     </InputContainer>
   );
 };
@@ -61,7 +57,7 @@ const StyledLabel = styled.label<{ $disabled?: boolean }>`
   font-size: 14px;
   font-weight: 500;
   text-align: left;
-  color: ${(props) => (props.$disabled ? "#999" : "#333")};
+  color: ${(props) => (props.$disabled ? "#DADADA" : "#333")};
   cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
 `;
 const Error = styled.span`
@@ -74,24 +70,27 @@ const Error = styled.span`
 const StyledInput = styled.input<{ $isError: boolean }>`
   width: 450px;
   padding: 12px 16px;
-  border: 2px solid #fff;
+  border: ${(props) => (props.$isError ? "1px solid red" : "none")};
   border-radius: 1px;
   font-size: 16px;
   transition: border-color 0.3s ease;
   outline: none;
+  cursor: pointer;
 
   &:focus {
-    border-color: #999;
-    border-color: ${(props) => (props.$isError ? "red" : "#999")};
+    border: 2px solid ${(props) => (props.$isError ? "red" : "#dadada")};
   }
-
+  &:active {
+    background-color: #dadada;
+    border: none;
+  }
   &:disabled {
-    background-color: #f5f5f5;
+    background-color: #dadada;
     cursor: not-allowed;
   }
 
   &::placeholder {
-    color: #999;
+    color: #dadada;
   }
 `;
 export default Input;

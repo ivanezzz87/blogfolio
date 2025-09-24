@@ -5,20 +5,20 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Title from "../components/Title";
 export const SignIn: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setData] = useState({
     email: "",
     password: "",
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prevState) => ({
+    setData((prevState) => ({
       ...prevState,
       [field]: value,
     }));
   };
 
   const handleSubmit = () => {
-    console.log("Sign in attempt with:", formData);
+    console.log("Sign in:", formData);
   };
 
   return (
