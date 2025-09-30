@@ -1,12 +1,17 @@
-import React from "react";
 import "./App.css";
 import "./components/Button";
-import { SignIn } from "./pages/SignIn";
+import { ThemeSwitch } from "./theme/ThemeSwitch";
+import { ThemeProvider } from "./theme/ThemeContext";
+import SearchResultsPage from "./pages/SearchResults";
+
 function App() {
   return (
-    <div className="root-container">
-      <SignIn />
-    </div>
+    <ThemeProvider>
+      <div className="root-container">
+        <ThemeSwitch />
+        <SearchResultsPage/>
+      </div>
+    </ThemeProvider>
   );
 }
 

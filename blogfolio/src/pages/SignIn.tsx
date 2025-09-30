@@ -52,6 +52,7 @@ export const SignIn: React.FC = () => {
           state="enabled"
           onClick={handleSubmit}
         />
+        <span>Don't have an account? <a href="#">Sign up</a></span>
       </Container>
     </div>
   );
@@ -69,7 +70,7 @@ const Container = styled.div`
 `;
 const BackToHome = styled.a`
   text-decoration: none;
-  color: #000;
+  color: var(--link-color);
   font-size: 16px;
   margin-left: 10%;
 `;

@@ -57,7 +57,7 @@ const StyledLabel = styled.label<{ $disabled?: boolean }>`
   font-size: 14px;
   font-weight: 500;
   text-align: left;
-  color: ${(props) => (props.$disabled ? "#DADADA" : "#333")};
+  color: var(--text-color);
   cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
 `;
 const Error = styled.span`

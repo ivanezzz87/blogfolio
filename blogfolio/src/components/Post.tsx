@@ -10,6 +10,7 @@ interface PostItemProps {
   title: string;
   description?: string;
   isOpen?: boolean;
+  search?: boolean;
 }
 const PostItem: React.FC<PostItemProps> = ({
   image,
@@ -17,16 +18,29 @@ const PostItem: React.FC<PostItemProps> = ({
   title,
   description,
   isOpen,
+  search,
 }) => {
   return (
-    <PostContainer isOpen={isOpen}>
-      <PostContentContainer>
+    <PostContainer isOpen={isOpen} search={search}>
+      <PostContentContainer search={search}>
         {isOpen ? (
           <>
             <PostDate>{date}</PostDate>
             <PostTitle isOpen={isOpen}>{title}</PostTitle>
             {image && <PostImage src={image} alt="Пост изображение" />}
             {description && <PostDescription>{description}</PostDescription>}
+          </>
+        ) : search ? (
+          <>
+            {image && (
+              <PostImage search={search} src={image} alt="Пост изображение" />
+            )}
+            <div>
+              <PostDate>{date}</PostDate>
+              <PostTitle isOpen={isOpen} search={search}>
+                {title}
+              </PostTitle>
+            </div>
           </>
         ) : (
           <>
@@ -37,76 +51,87 @@ const PostItem: React.FC<PostItemProps> = ({
         )}
       </PostContentContainer>
       <ActionsContainer>
-        <ActionButton>
-          <ActionIcon src={upIcon} alt="Лайк" />
-        </ActionButton>
-        <ActionButton>
-          <ActionIcon src={downIcon} alt="Дизлайк" />
-        </ActionButton>
-        <ActionButton>
-          <ActionIcon src={bookmarkIcon} alt="В закладки" />
-          Add to Bookmark
-        </ActionButton>
-        <ActionButton>
-          <ActionIcon src={moreIcon} alt="Еще" />
-        </ActionButton>
+        <UnderActionsContainer>
+          <ActionButton>
+            <ActionIcon src={upIcon} alt="Лайк" />
+          </ActionButton>
+          <ActionButton>
+            <ActionIcon src={downIcon} alt="Дизлайк" />
+          </ActionButton>
+        </UnderActionsContainer>
+        <UnderActionsContainer>
+          <ActionButton>
+            <ActionIcon src={bookmarkIcon} alt="В закладки" />
+            {isOpen ? "Add to Bookmarks" : ""}
+          </ActionButton>
+          <ActionButton>
+            <ActionIcon src={moreIcon} alt="Еще" />
+          </ActionButton>
+        </UnderActionsContainer>
       </ActionsContainer>
     </PostContainer>
   );
 };
-const PostContainer = styled.div<{ isOpen?: boolean }>`
-  max-width: ${(props) => (props.isOpen ? "70%" : "350px")};
+const PostContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
+  width: ${(props) => (props.isOpen || props.search ? "70%" : "350px")};
   margin: 20px auto;
   padding: 20px;
   border-radius: 8px;
-  background-color: #fff;
+  background-color: var(--bg-color);
 `;
 
-const PostContentContainer = styled.div`
+const PostContentContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${(props) => (props.search ? "row" : "column")};
   gap: 20px;
   margin-bottom: 15px;
 `;
 
-const PostImage = styled.img<{ isOpen?: boolean }>`
+const PostImage = styled.img<{ search?: boolean }>`
   object-fit: cover;
+  max-width: ${(props) => (props.search ? "150px" : "fit-content")};
 `;
 
-const PostTitle = styled.p<{ isOpen?: boolean }>`
-  font-size: ${(props) => (props.isOpen ? "32px" : "18px")};
+const PostTitle = styled.p<{ isOpen?: boolean; search?: boolean }>`
+  font-size: ${(props) =>
+    props.isOpen ? "32px" : props.search ? "14px" : "18px"};
   text-align: ${(props) => (props.isOpen ? "center" : "left")};
   font-weight: ${(props) => (props.isOpen ? "bold" : "normal")};
   margin: 0 0 10px 0;
-  color: #333;
+  color: var(--text-color);
   line-height: 1.3;
 `;
 
 const PostDate = styled.p`
   font-size: 0.9em;
-  color: #888;
+  color: var(--text-color);
   margin: 0 0 12px 0;
   font-weight: 500;
 `;
 
 const PostDescription = styled.p`
   font-size: 1em;
-  color: #555;
+  color: var(--text-color);
   margin: 0 0 0 0;
   line-height: 1.5;
 `;
 
 const ActionsContainer = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 15px;
   padding-top: 15px;
   border-top: 1px solid #f0f0f0;
 `;
-
+const UnderActionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
 const ActionButton = styled.button<{ active?: boolean }>`
-  background-color: ${(props) => (props.active ? "#007bff" : "transparent")};
+  background-color: ${(props) =>
+    props.active ? "#007bff" : "var(--button-color)"};
   color: ${(props) => (props.active ? "white" : "#007bff")};
   padding: 8px 12px;
   cursor: pointer;
