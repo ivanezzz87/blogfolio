@@ -76,8 +76,9 @@ const PostContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
   width: ${(props) => (props.isOpen || props.search ? "70%" : "350px")};
   margin: 20px auto;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: ${(props) => (props.search ? "0" : "8")};
   background-color: var(--bg-color);
+  border-bottom: ${(props) => (props.search ? "1px solid var(--border-color)" : "none")};
 `;
 
 const PostContentContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
