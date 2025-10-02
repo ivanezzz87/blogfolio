@@ -1,17 +1,33 @@
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
-import "./components/Button";
-import { ThemeSwitch } from "./theme/ThemeSwitch";
 import { ThemeProvider } from "./theme/ThemeContext";
-import SearchResultsPage from "./pages/SearchResults";
+import Layout from "./components/Layout";
+import { SignIn } from "./pages/SignIn";
+import AllPosts from "./pages/AllPosts";
+import { SelectedPost } from "./pages/SelectedPost";
+import Success from "./pages/Success";
+import NotFound from "./pages/NotFound";
+import { Signup } from "./pages/Signup";
 
 function App() {
   return (
-    <ThemeProvider>
-      <div className="root-container">
-        <ThemeSwitch />
-        <SearchResultsPage/>
-      </div>
-    </ThemeProvider>
+    <Router>
+      <ThemeProvider>
+        <div className="root-container">
+          <Layout>
+            <Routes>
+              <Route path="/" element={<SignIn />} />
+              <Route path="/posts" element={<AllPosts />} />
+              <Route path="/posts/:id" element={<SelectedPost />} />
+              <Route path="/selectedpost" element={<SelectedPost />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </div>
+      </ThemeProvider>
+    </Router>
   );
 }
 

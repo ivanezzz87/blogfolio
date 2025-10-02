@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import PostItem from "../components/Post";
+import { Link } from "react-router-dom";
 import Title from "../components/Title";
-import Header from "../components/Header";
 import TabsComponent from "../components/Tabs";
 import type { Tab } from "../components/Tabs";
 import type { PostEntity } from "../services/api";
@@ -13,7 +13,6 @@ const PostsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 5;
-  
   const tabs: Tab[] = [
     { label: "All", value: "all" },
     { label: "My favorites", value: "favorites" },
@@ -61,7 +60,6 @@ const PostsPage: React.FC = () => {
   };
   return (
     <PageContainer>
-      <Header></Header>
       <Title text="Blogs" />
       <TabsComponent
         tabs={tabs}
@@ -70,6 +68,7 @@ const PostsPage: React.FC = () => {
       />
       <PostsGrid>
         {posts.map((post) => (
+          <PostLink key={post.id} to={`/posts/${post.id}`}>
           <PostItem
             key={post.id}
             image={post.image}
@@ -77,6 +76,7 @@ const PostsPage: React.FC = () => {
             title={post.title}
             description={post.text}
           />
+          </PostLink>
         ))}
       </PostsGrid>
       {posts.length > postsPerPage && (
@@ -115,7 +115,7 @@ const PostsPage: React.FC = () => {
 };
 
 const PageContainer = styled.div`
-  background-color: #fff;
+  background-color: var(--bg-color);
 `;
 
 const PostsGrid = styled.div`
@@ -183,5 +183,13 @@ const PageNumber = styled.button<{ active?: boolean }>`
     border-color: ${(props) => (props.active ? "#0056b3" : "#999")};
   }
 `;
-
+const PostLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  
+  &:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+  }
+`;
 export default PostsPage;
