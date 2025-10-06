@@ -4,10 +4,12 @@ import styled from "styled-components";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Title from "../components/Title";
-export const SignIn: React.FC = () => {
+export const Signup: React.FC = () => {
   const [formData, setData] = useState({
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const navigate = useNavigate();
   const handleInputChange = (field: string, value: string) => {
@@ -18,20 +20,28 @@ export const SignIn: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    navigate("/posts");
+    navigate("/success");
   };
 
   return (
     <div>
       <HeaderContainer>
-        <BackToHome as={Link} to="/">Back to home</BackToHome>
+        <BackToHome href="/">Back to home</BackToHome>
         <Title text="Sign in" />
       </HeaderContainer>
       <Container>
         <Input
+          type="text"
+          value={formData.name}
+          placeholder="Your name"
+          label="Email"
+          id="email"
+          onChange={(value) => handleInputChange("email", value)}
+        />
+        <Input
           type="email"
           value={formData.email}
-          placeholder="Enter your email"
+          placeholder="Your email"
           label="Email"
           id="email"
           onChange={(value) => handleInputChange("email", value)}
@@ -39,20 +49,20 @@ export const SignIn: React.FC = () => {
         <Input
           type="password"
           value={formData.password}
-          placeholder="Enter your password"
+          placeholder="Your password"
           label="Password"
           id="password"
           onChange={(value) => handleInputChange("password", value)}
         />
         <a href="#">Forgot password?</a>
         <Button
-          content="Sign in"
+          content="Sign up"
           type="primary"
           state="enabled"
           onClick={handleSubmit}
         />
         <span>
-          Don't have an account? <StyledLink to="/signup">Sign up</StyledLink>
+          Already have account? <StyledLink to="/">Sign in</StyledLink>
         </span>
       </Container>
     </div>
@@ -69,7 +79,7 @@ const Container = styled.div`
   width: 500px;
   border: 1px solid lightgray;
 `;
-const BackToHome = styled(Link)`
+const BackToHome = styled.a`
   text-decoration: none;
   color: var(--link-color);
   font-size: 16px;

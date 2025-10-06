@@ -45,7 +45,7 @@ const TabsContainer = styled.div`
 
 const TabHeaders = styled.div`
   display: flex;
-  background-color: #fff;
+  background-color: var(--bg-color);
   border-bottom: 2px solid #e0e0e0;
   gap: 0;
 `;

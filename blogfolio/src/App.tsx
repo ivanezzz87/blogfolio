@@ -1,12 +1,20 @@
-import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css";
-import "./components/Button";
-import PostsPage from "./pages/AllPosts";
+import { ThemeProvider } from "./theme/ThemeContext";
+import Layout from "./components/Layout";
+import { AppRouter } from "./router/Router";
+
 function App() {
   return (
-    <div className="root-container">
-      <PostsPage />
-    </div>
+    <Router>
+      <ThemeProvider>
+        <div className="root-container">
+          <Layout>
+            <AppRouter />
+          </Layout>
+        </div>
+      </ThemeProvider>
+    </Router>
   );
 }
 

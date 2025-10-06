@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import Header from "../components/Header";
 import Button from "../components/Button";
 import Title from "../components/Title";
+import { useNavigate} from "react-router-dom";
 export const Success: React.FC = () => {
+   const navigate = useNavigate();
   return (
     <div>
-      <Header />
       <BackToHome href="/">Back to home</BackToHome>
       <Title text="Success" />
       <Container>
@@ -17,7 +17,7 @@ export const Success: React.FC = () => {
           content="Go to home"
           type="primary"
           state="enabled"
-          onClick={() => console.log("Sign in")}
+          onClick={() => navigate("/")}
         />
       </Container>
     </div>

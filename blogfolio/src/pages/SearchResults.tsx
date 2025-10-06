@@ -1,42 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import PostItem from "../components/Post";
-import { Link } from "react-router-dom";
 import Title from "../components/Title";
-import TabsComponent from "../components/Tabs";
-import type { Tab } from "../components/Tabs";
+import Header from "../components/Header";
 import type { PostEntity } from "../services/api";
 import mockPosts from "../services/api";
-const PostsPage: React.FC = () => {
+
+const SearchResultsPage: React.FC = () => {
   const [posts, setPosts] = useState<PostEntity[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 5;
-  const tabs: Tab[] = [
-    { label: "All", value: "all" },
-    { label: "My favorites", value: "favorites" },
-    { label: "Popular", value: "popular" },
-  ];
-
-  const handleTabChange = (tabValue: string) => {
-    setActiveTab(tabValue);
-  };
 
   useEffect(() => {
-    setTimeout(() => {
-      setPosts(mockPosts);
-      setLoading(false);
-    }, 500);
+    setPosts(mockPosts);
   }, []);
 
-  if (loading) {
-    return (
-      <PageContainer>
-        <LoadingSpinner>Загрузка...</LoadingSpinner>
-      </PageContainer>
-    );
-  }
+  const currentPosts = posts.slice(
+    (currentPage - 1) * postsPerPage,
+    currentPage * postsPerPage
+  );
 
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
@@ -58,25 +40,21 @@ const PostsPage: React.FC = () => {
     setCurrentPage(pageNumber);
     window.scrollTo(0, 0);
   };
+
   return (
     <PageContainer>
-      <Title text="Blogs" />
-      <TabsComponent
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <Header />
+      <Title text="Search results 'Astronauts'" />
       <PostsGrid>
-        {posts.map((post) => (
-          <PostLink key={post.id} to={`/posts/${post.id}`}>
+        {currentPosts.map((post) => (
           <PostItem
             key={post.id}
             image={post.image}
             date={post.date}
             title={post.title}
             description={post.text}
+            search={true}
           />
-          </PostLink>
         ))}
       </PostsGrid>
       {posts.length > postsPerPage && (
@@ -94,7 +72,7 @@ const PostsPage: React.FC = () => {
                 <PageNumber
                   key={pageNumber}
                   active={pageNumber === currentPage}
-                  onClick={() => handlePageClick(pageNumber)}
+              onClick={() => handlePageClick(pageNumber)}
                 >
                   {pageNumber}
                 </PageNumber>
@@ -115,28 +93,17 @@ const PostsPage: React.FC = () => {
 };
 
 const PageContainer = styled.div`
-  background-color: var(--bg-color);
+  background-color: (var(--bg-color));
 `;
 
 const PostsGrid = styled.div`
-  width: fit-content;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  @media (max-width: 520px) {
-    grid-template-columns: repeat(1, 1fr);
-  }
+  width: 90%;
+  display: flex;
+  flex-direction: column;
   justify-items: center;
   margin: 0 auto;
 `;
 
-const LoadingSpinner = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  font-size: 1.2em;
-  color: #666;
-`;
 const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -183,13 +150,5 @@ const PageNumber = styled.button<{ active?: boolean }>`
     border-color: ${(props) => (props.active ? "#0056b3" : "#999")};
   }
 `;
-const PostLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-  
-  &:hover {
-    transform: translateY(-5px);
-    transition: transform 0.3s ease;
-  }
-`;
-export default PostsPage;
+
+export default SearchResultsPage;
