@@ -1,11 +1,35 @@
 import React from "react";
 import styled from "styled-components";
 import UserInfo from "./UserInfo";
+import { useNavigate} from "react-router-dom";
 interface BurgerMenuProps {
   $isOpen: boolean;
   onClick: () => void;
 }
 
+const BurgerMenu: React.FC<BurgerMenuProps> = ({ $isOpen, onClick }) => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <BurgerButton isOpen={$isOpen} onClick={onClick}>
+        <BurgerLine isOpen={$isOpen} />
+        <BurgerLine isOpen={$isOpen} />
+        <BurgerLine isOpen={$isOpen} />
+      </BurgerButton>
+      <MenuOverlay isOpen={$isOpen}>
+        <NavContainer>
+          <UserInfo firstName="Ivan" lastName="Dudko" />
+          <MenuItem onClick={() => navigate("/")}>
+            Home
+          </MenuItem>
+          <MenuItem onClick={onClick}>
+            Add post
+          </MenuItem>
+        </NavContainer>
+      </MenuOverlay>
+    </>
+  );
+};
 const BurgerButton = styled.button<{ isOpen: boolean }>`
   display: flex;
   flex-direction: column;
@@ -58,7 +82,7 @@ const MenuOverlay = styled.div<{ isOpen: boolean }>`
   left: 0;
   width: 236px;
   height: 100%;
-  background: #fff;
+  background: var(--bg-color);;
   display: ${(props) => (props.isOpen ? "flex" : "none")};
   flex-direction: row;
   z-index: 5;
@@ -70,14 +94,15 @@ const NavContainer = styled.nav`
   flex-direction: column;
 `;
 const MenuItem = styled.a`
-  color: black;
+  color: var(--text-color);
   text-decoration: none;
   padding: 20px 10px;
   transition: all 0.3s ease;
   position: relative;
   border-bottom: 1px solid lightgray;
   &:hover {
-    color: #2231AA;
+    color: #2231aa;
+    cursor: pointer;
   }
 
   &::before {
@@ -96,26 +121,4 @@ const MenuItem = styled.a`
     opacity: 1;
   }
 `;
-const BurgerMenu: React.FC<BurgerMenuProps> = ({ $isOpen, onClick }) => {
-  return (
-    <>
-      <BurgerButton isOpen={$isOpen} onClick={onClick}>
-        <BurgerLine isOpen={$isOpen} />
-        <BurgerLine isOpen={$isOpen} />
-        <BurgerLine isOpen={$isOpen} />
-      </BurgerButton>
-      <MenuOverlay isOpen={$isOpen}>
-        <NavContainer>
-          <UserInfo firstName="Ivan" lastName="Dudko" />
-          <MenuItem href="#about" onClick={onClick}>
-            Home
-          </MenuItem>
-          <MenuItem href="#services" onClick={onClick}>
-            Add post
-          </MenuItem>
-        </NavContainer>
-      </MenuOverlay>
-    </>
-  );
-};
 export default BurgerMenu;

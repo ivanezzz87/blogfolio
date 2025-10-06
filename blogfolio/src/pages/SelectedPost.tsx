@@ -1,10 +1,9 @@
 import React from "react";
-import Header from "../components/Header";
 import PostItem from "../components/Post";
+import styled from "styled-components";
 export const SelectedPost: React.FC = () => {
   return (
-    <div>
-      <Header />
+    <PostsContainer>
       <PostItem
         image="https://twt-thumbs.washtimes.com/media/image/2020/04/01/space_new_astronauts_53787_c0-0-4000-2332_s885x516.jpg?c1b9c89c00ce1ca84a8208a5a661db823be13ce1"
         date="2025-09-18"
@@ -23,6 +22,12 @@ This tribute is to all of them: to the legends who took those first terrifying, 
 They are the brave pioneers of space. They venture into the unknown so that we may all learn, dream, and aspire to reach further. They remind us that with immense courage, unwavering curiosity, and a spirit of cooperation, there is no limit to what humanity can achieve. Their legacy is not just written in the history books, but in the very stars they strive to reach."
         isOpen={true}
       />
-    </div>
+    </PostsContainer>
   );
 };
+const PostsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+`;
