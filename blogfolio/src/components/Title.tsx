@@ -8,7 +8,7 @@ margin-left: 10%;
 `
 const TitleContent = styled.h2`
 font-size: 32px;
-color: #000;
+color: var(--text-color);
 `
 interface ITitle {
     text: string

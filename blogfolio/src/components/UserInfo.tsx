@@ -19,8 +19,10 @@ padding: 5px 10px;
 border-radius: 5px;
 `
 const UserAvatar = styled.h2`
+color:white;
 `
 const UserName = styled.h2`
+color:white;
 `
 const UserInfo: React.FC<IUserInfo> = ({ firstName, lastName, children }) => {
     return (
