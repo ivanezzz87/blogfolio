@@ -4,6 +4,8 @@ import upIcon from "../assets/up.svg";
 import downIcon from "../assets/down.svg";
 import bookmarkIcon from "../assets/bookmark.svg";
 import moreIcon from "../assets/more.svg";
+import { useDispatch } from "react-redux";
+import { setSelectedPost } from "../PostsSlice";
 interface PostItemProps {
   image?: string;
   date: string;
@@ -11,7 +13,9 @@ interface PostItemProps {
   description?: string;
   isOpen?: boolean;
   search?: boolean;
+  isPopup?: boolean;
 }
+
 const PostItem: React.FC<PostItemProps> = ({
   image,
   date,
@@ -19,10 +23,21 @@ const PostItem: React.FC<PostItemProps> = ({
   description,
   isOpen,
   search,
+  isPopup,
 }) => {
+  const dispatch = useDispatch();
+  const handleOpenPreview = () => {
+    dispatch(setSelectedPost({ image, date, title, description }));
+  };
+
   return (
-    <PostContainer isOpen={isOpen} search={search}>
-      <PostContentContainer search={search}>
+    <PostContainer
+      isOpen={isOpen}
+      search={search}
+      isPopup={isPopup}
+      onClick={handleOpenPreview}
+    >
+      <PostContentContainer search={search} isPopup={isPopup}>
         {isOpen ? (
           <>
             <PostDate>{date}</PostDate>
@@ -42,6 +57,12 @@ const PostItem: React.FC<PostItemProps> = ({
               </PostTitle>
             </div>
           </>
+        ) : isPopup ? (
+          <>
+            {image && (
+              <PostImage search={search} src={image} alt="Пост изображение" />
+            )}
+          </>
         ) : (
           <>
             {image && <PostImage src={image} alt="Пост изображение" />}
@@ -50,38 +71,54 @@ const PostItem: React.FC<PostItemProps> = ({
           </>
         )}
       </PostContentContainer>
-      <ActionsContainer>
-        <UnderActionsContainer>
-          <ActionButton>
-            <ActionIcon src={upIcon} alt="Лайк" />
-          </ActionButton>
-          <ActionButton>
-            <ActionIcon src={downIcon} alt="Дизлайк" />
-          </ActionButton>
-        </UnderActionsContainer>
-        <UnderActionsContainer>
-          <ActionButton>
-            <ActionIcon src={bookmarkIcon} alt="В закладки" />
-            {isOpen ? "Add to Bookmarks" : ""}
-          </ActionButton>
-          <ActionButton>
-            <ActionIcon src={moreIcon} alt="Еще" />
-          </ActionButton>
-        </UnderActionsContainer>
+      <ActionsContainer isPopup={isPopup}>
+        {isPopup ? (
+          <>
+          </>
+        ) : (
+          <>
+            <UnderActionsContainer>
+              <ActionButton>
+                <ActionIcon src={upIcon} alt="Лайк" />
+              </ActionButton>
+              <ActionButton>
+                <ActionIcon src={downIcon} alt="Дизлайк" />
+              </ActionButton>
+            </UnderActionsContainer>
+            <UnderActionsContainer>
+              <ActionButton>
+                <ActionIcon src={bookmarkIcon} alt="В закладки" />
+                {isOpen ? "Add to Bookmarks" : ""}
+              </ActionButton>
+              <ActionButton>
+                <ActionIcon src={moreIcon} alt="Еще" />
+              </ActionButton>
+            </UnderActionsContainer>
+          </>
+        )}
       </ActionsContainer>
     </PostContainer>
   );
 };
-const PostContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
+const PostContainer = styled.div<{
+  isOpen?: boolean;
+  search?: boolean;
+  isPopup?: boolean;
+}>`
   width: ${(props) => (props.isOpen || props.search ? "70%" : "350px")};
   margin: 20px auto;
   padding: 20px;
   border-radius: ${(props) => (props.search ? "0" : "8")};
   background-color: var(--bg-color);
-  border-bottom: ${(props) => (props.search ? "1px solid var(--border-color)" : "none")};
+  border-bottom: ${(props) =>
+    props.search ? "1px solid var(--border-color)" : "none"};
 `;
 
-const PostContentContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
+const PostContentContainer = styled.div<{
+  isOpen?: boolean;
+  search?: boolean;
+  isPopup?: boolean;
+}>`
   display: flex;
   flex-direction: ${(props) => (props.search ? "row" : "column")};
   gap: 20px;
@@ -117,7 +154,7 @@ const PostDescription = styled.p`
   line-height: 1.5;
 `;
 
-const ActionsContainer = styled.div`
+const ActionsContainer = styled.div<{ isPopup?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;

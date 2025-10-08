@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import PostItem from "../components/Post";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import Title from "../components/Title";
 import TabsComponent from "../components/Tabs";
 import type { Tab } from "../components/Tabs";
@@ -68,7 +68,7 @@ const PostsPage: React.FC = () => {
       />
       <PostsGrid>
         {posts.map((post) => (
-          <PostLink key={post.id} to={`/posts/${post.id}`}>
+          // <PostLink key={post.id} to={`/posts/${post.id}`}>
           <PostItem
             key={post.id}
             image={post.image}
@@ -76,7 +76,7 @@ const PostsPage: React.FC = () => {
             title={post.title}
             description={post.text}
           />
-          </PostLink>
+          // </PostLink>
         ))}
       </PostsGrid>
       {posts.length > postsPerPage && (
@@ -183,13 +183,13 @@ const PageNumber = styled.button<{ active?: boolean }>`
     border-color: ${(props) => (props.active ? "#0056b3" : "#999")};
   }
 `;
-const PostLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
+// const PostLink = styled(Link)`
+//   text-decoration: none;
+//   color: inherit;
   
-  &:hover {
-    transform: translateY(-5px);
-    transition: transform 0.3s ease;
-  }
-`;
+//   &:hover {
+//     transform: translateY(-5px);
+//     transition: transform 0.3s ease;
+//   }
+// `;
 export default PostsPage;
