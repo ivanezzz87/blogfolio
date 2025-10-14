@@ -3,10 +3,14 @@ import styled from "styled-components";
 import upIcon from "../assets/up.svg";
 import downIcon from "../assets/down.svg";
 import bookmarkIcon from "../assets/bookmark.svg";
+import bookmarkFilledIcon from "../assets/bookmark-filled.svg";
 import moreIcon from "../assets/more.svg";
-import { useDispatch } from "react-redux";
-import { setSelectedPost } from "../PostsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedPost, toggleFavorite } from "../PostsSlice";
+import type { RootState } from "../store";
+
 interface PostItemProps {
+  id: number;
   image?: string;
   date: string;
   title: string;
@@ -14,9 +18,12 @@ interface PostItemProps {
   isOpen?: boolean;
   search?: boolean;
   isPopup?: boolean;
+  lesson_num?: number;
+  author?: number;
 }
 
 const PostItem: React.FC<PostItemProps> = ({
+  id,
   image,
   date,
   title,
@@ -24,10 +31,21 @@ const PostItem: React.FC<PostItemProps> = ({
   isOpen,
   search,
   isPopup,
+  lesson_num,
+  author,
 }) => {
   const dispatch = useDispatch();
+  const favorites = useSelector((state: RootState) => state.posts.favorites);
+  
+  const isFavorite = favorites.some(post => post.id === id);
+
   const handleOpenPreview = () => {
-    dispatch(setSelectedPost({ image, date, title, description }));
+    dispatch(setSelectedPost({ id, image, date, title, description, lesson_num, author }));
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(toggleFavorite({ id, image, date, title, description, lesson_num, author }));
   };
 
   return (
@@ -73,8 +91,7 @@ const PostItem: React.FC<PostItemProps> = ({
       </PostContentContainer>
       <ActionsContainer isPopup={isPopup}>
         {isPopup ? (
-          <>
-          </>
+          <></>
         ) : (
           <>
             <UnderActionsContainer>
@@ -86,9 +103,15 @@ const PostItem: React.FC<PostItemProps> = ({
               </ActionButton>
             </UnderActionsContainer>
             <UnderActionsContainer>
-              <ActionButton>
-                <ActionIcon src={bookmarkIcon} alt="В закладки" />
-                {isOpen ? "Add to Bookmarks" : ""}
+              <ActionButton 
+                active={isFavorite}
+                onClick={handleToggleFavorite}
+              >
+                <ActionIcon 
+                  src={isFavorite ? bookmarkFilledIcon : bookmarkIcon} 
+                  alt={isFavorite ? "Удалить из закладок" : "В закладки"} 
+                />
+                {isOpen ? (isFavorite ? "Remove from Bookmarks" : "Add to Bookmarks") : ""}
               </ActionButton>
               <ActionButton>
                 <ActionIcon src={moreIcon} alt="Еще" />
@@ -100,6 +123,7 @@ const PostItem: React.FC<PostItemProps> = ({
     </PostContainer>
   );
 };
+
 const PostContainer = styled.div<{
   isOpen?: boolean;
   search?: boolean;
@@ -162,11 +186,13 @@ const ActionsContainer = styled.div<{ isPopup?: boolean }>`
   padding-top: 15px;
   border-top: 1px solid #f0f0f0;
 `;
+
 const UnderActionsContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
 `;
+
 const ActionButton = styled.button<{ active?: boolean }>`
   background-color: ${(props) =>
     props.active ? "#007bff" : "var(--button-color)"};
