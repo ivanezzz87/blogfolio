@@ -44,11 +44,18 @@ const PostsPage: React.FC = () => {
     );
   }
 
-  const filteredPosts = activeTab === "favorites" 
-    ? favorites 
-    : activeTab === "popular" 
-    ? posts.filter(post => post.lesson_num && post.lesson_num > 105)
-    : posts;
+let filteredPosts;
+
+switch (activeTab) {
+    case "favorites":
+        filteredPosts = favorites;
+        break;
+    case "popular":
+        filteredPosts = posts.filter(post => post.lesson_num && post.lesson_num > 105);
+        break;
+    default:
+        filteredPosts = posts;
+}
 
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
