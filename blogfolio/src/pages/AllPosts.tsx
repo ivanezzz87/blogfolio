@@ -45,15 +45,18 @@ const PostsPage: React.FC = () => {
       </PageContainer>
     );
   }
-
-  if (error && activeTab !== "favorites") {
-    return (
-      <PageContainer>
-        <ErrorMessage>Ошибка: {error}</ErrorMessage>
-      </PageContainer>
-    );
-  }
-
+  
+switch (activeTab) {
+    case "favorites":
+        filteredPosts = favorites;
+        break;
+    case "popular":
+        filteredPosts = posts.filter(post => post.lesson_num && post.lesson_num > 105);
+        break;
+    default:
+        filteredPosts = posts;
+}
+  
   const totalPages = activeTab === "favorites"
     ? Math.ceil(favorites.length / postsPerPage)
     : totalPagesFromRedux;
