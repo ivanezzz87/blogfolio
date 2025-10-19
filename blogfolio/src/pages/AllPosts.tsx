@@ -4,19 +4,15 @@ import PostItem from "../components/Post";
 import Title from "../components/Title";
 import TabsComponent from "../components/Tabs";
 import type { Tab } from "../components/Tabs";
-import type { PostEntity } from "../services/api";
-import mockPosts from "../services/api";
-import { useSelector } from "react-redux";
-import type { RootState } from "../store";
-
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../store";
+import { fetchPosts, setCurrentPage, clearError } from "../PostsSlice";
 const PostsPage: React.FC = () => {
-  const [posts, setPosts] = useState<PostEntity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>(); 
+  const { posts, favorites, loading, error, currentPage, totalPages: totalPagesFromRedux } = useSelector((state: RootState) => state.posts);
+
   const [activeTab, setActiveTab] = useState<string>("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 5;
-  
-  const favorites = useSelector((state: RootState) => state.posts.favorites);
+  const postsPerPage = 10; 
 
   const tabs: Tab[] = [
     { label: "All", value: "all" },
@@ -26,26 +22,30 @@ const PostsPage: React.FC = () => {
 
   const handleTabChange = (tabValue: string) => {
     setActiveTab(tabValue);
-    setCurrentPage(1);
+    dispatch(setCurrentPage(1));
+    dispatch(clearError()); 
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setPosts(mockPosts);
-      setLoading(false);
-    }, 500);
-  }, []);
+    if (activeTab === "favorites") return;
 
-  if (loading) {
+    const params = {
+      page: currentPage,
+      limit: postsPerPage,
+      ...(activeTab === "popular" ? { lesson_num__gt: 105 } : {}),
+    };
+
+    dispatch(fetchPosts(params));
+  }, [activeTab, currentPage, dispatch]);
+
+  if (loading && activeTab !== "favorites") {
     return (
       <PageContainer>
         <LoadingSpinner>Загрузка...</LoadingSpinner>
       </PageContainer>
     );
   }
-
-let filteredPosts;
-
+  
 switch (activeTab) {
     case "favorites":
         filteredPosts = favorites;
@@ -56,30 +56,31 @@ switch (activeTab) {
     default:
         filteredPosts = posts;
 }
+  
+  const totalPages = activeTab === "favorites"
+    ? Math.ceil(favorites.length / postsPerPage)
+    : totalPagesFromRedux;
 
-  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-
-  const currentPosts = filteredPosts.slice(
-    (currentPage - 1) * postsPerPage,
-    currentPage * postsPerPage
-  );
+  const currentPosts = activeTab === "favorites"
+    ? favorites.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage)
+    : posts;
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      dispatch(setCurrentPage(currentPage + 1));
       window.scrollTo(0, 0);
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      dispatch(setCurrentPage(currentPage - 1));
       window.scrollTo(0, 0);
     }
   };
 
   const handlePageClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    dispatch(setCurrentPage(pageNumber));
     window.scrollTo(0, 0);
   };
 
@@ -92,29 +93,29 @@ switch (activeTab) {
         onTabChange={handleTabChange}
       />
       
-      {activeTab === "favorites" && favorites.length === 0 && (
+      {activeTab === "favorites" && favorites.length === 0 ? (
         <EmptyState>
-          <EmptyStateText>No favorite posts yet</EmptyStateText>
-          <EmptyStateSubtext>Add posts to favorites by clicking the bookmark icon</EmptyStateSubtext>
+          <EmptyStateText>Пусто</EmptyStateText>
+          <EmptyStateSubtext>Добавьте посты, кликнув на закладку</EmptyStateSubtext>
         </EmptyState>
+      ) : (
+        <PostsGrid>
+          {currentPosts.map((post) => (
+            <PostItem
+              key={post.id}
+              id={post.id}
+              image={post.image}
+              date={post.date}
+              title={post.title}
+              description={post.description}
+              lesson_num={post.lesson_num}
+              author={post.author}
+            />
+          ))}
+        </PostsGrid>
       )}
       
-      <PostsGrid>
-        {currentPosts.map((post) => (
-          <PostItem
-            key={post.id}
-            id={post.id}
-            image={post.image}
-            date={post.date}
-            title={post.title}
-            description={post.description}
-            lesson_num={post.lesson_num}
-            author={post.author}
-          />
-        ))}
-      </PostsGrid>
-      
-      {filteredPosts.length > postsPerPage && (
+      { (activeTab !== "favorites" ? posts.length : favorites.length) > 0 && totalPages > 1 && (
         <PaginationContainer>
           <PaginationButton
             onClick={handlePrevPage}
@@ -148,7 +149,6 @@ switch (activeTab) {
     </PageContainer>
   );
 };
-
 const PageContainer = styled.div`
   background-color: var(--bg-color);
 `;
@@ -171,6 +171,15 @@ const LoadingSpinner = styled.div`
   height: 200px;
   font-size: 1.2em;
   color: #666;
+`;
+
+const ErrorMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2em;
+  color: red;
 `;
 
 const PaginationContainer = styled.div`
