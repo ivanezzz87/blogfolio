@@ -6,8 +6,9 @@ import bookmarkIcon from "../assets/bookmark.svg";
 import bookmarkFilledIcon from "../assets/bookmark-filled.svg";
 import moreIcon from "../assets/more.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedPost, toggleFavorite } from "../PostsSlice";
+import { toggleFavorite } from "../PostsSlice";
 import type { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
 
 interface PostItemProps {
   id: number;
@@ -34,26 +35,29 @@ const PostItem: React.FC<PostItemProps> = ({
   lesson_num,
   author,
 }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const favorites = useSelector((state: RootState) => state.posts.favorites);
   
   const isFavorite = favorites.some(post => post.id === id);
 
-  const handleOpenPreview = () => {
-    dispatch(setSelectedPost({ id, image, date, title, description, lesson_num, author }));
-  };
+  // const handleOpenPreview = () => {
+  //   dispatch(setSelectedPost({ id, image, date, title, description, lesson_num, author }));
+  // };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch(toggleFavorite({ id, image, date, title, description, lesson_num, author }));
   };
-
+  const handlePostClick = () => {
+    navigate(`/posts/${id}`);
+  };
   return (
     <PostContainer
       isOpen={isOpen}
       search={search}
       isPopup={isPopup}
-      onClick={handleOpenPreview}
+      onClick={handlePostClick}
     >
       <PostContentContainer search={search} isPopup={isPopup}>
         {isOpen ? (
