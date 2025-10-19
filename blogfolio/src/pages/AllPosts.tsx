@@ -92,7 +92,6 @@ switch (activeTab) {
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
-      
       {activeTab === "favorites" && favorites.length === 0 ? (
         <EmptyState>
           <EmptyStateText>Пусто</EmptyStateText>
