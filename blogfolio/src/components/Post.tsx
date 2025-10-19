@@ -3,26 +3,63 @@ import styled from "styled-components";
 import upIcon from "../assets/up.svg";
 import downIcon from "../assets/down.svg";
 import bookmarkIcon from "../assets/bookmark.svg";
+import bookmarkFilledIcon from "../assets/bookmark-filled.svg";
 import moreIcon from "../assets/more.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFavorite } from "../PostsSlice";
+import type { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
+
 interface PostItemProps {
+  id: number;
   image?: string;
   date: string;
   title: string;
   description?: string;
   isOpen?: boolean;
   search?: boolean;
+  isPopup?: boolean;
+  lesson_num?: number;
+  author?: number;
 }
+
 const PostItem: React.FC<PostItemProps> = ({
+  id,
   image,
   date,
   title,
   description,
   isOpen,
   search,
+  isPopup,
+  lesson_num,
+  author,
 }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const favorites = useSelector((state: RootState) => state.posts.favorites);
+  
+  const isFavorite = favorites.some(post => post.id === id);
+
+  // const handleOpenPreview = () => {
+  //   dispatch(setSelectedPost({ id, image, date, title, description, lesson_num, author }));
+  // };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(toggleFavorite({ id, image, date, title, description, lesson_num, author }));
+  };
+  const handlePostClick = () => {
+    navigate(`/posts/${id}`);
+  };
   return (
-    <PostContainer isOpen={isOpen} search={search}>
-      <PostContentContainer search={search}>
+    <PostContainer
+      isOpen={isOpen}
+      search={search}
+      isPopup={isPopup}
+      onClick={handlePostClick}
+    >
+      <PostContentContainer search={search} isPopup={isPopup}>
         {isOpen ? (
           <>
             <PostDate>{date}</PostDate>
@@ -42,6 +79,12 @@ const PostItem: React.FC<PostItemProps> = ({
               </PostTitle>
             </div>
           </>
+        ) : isPopup ? (
+          <>
+            {image && (
+              <PostImage search={search} src={image} alt="Пост изображение" />
+            )}
+          </>
         ) : (
           <>
             {image && <PostImage src={image} alt="Пост изображение" />}
@@ -50,38 +93,60 @@ const PostItem: React.FC<PostItemProps> = ({
           </>
         )}
       </PostContentContainer>
-      <ActionsContainer>
-        <UnderActionsContainer>
-          <ActionButton>
-            <ActionIcon src={upIcon} alt="Лайк" />
-          </ActionButton>
-          <ActionButton>
-            <ActionIcon src={downIcon} alt="Дизлайк" />
-          </ActionButton>
-        </UnderActionsContainer>
-        <UnderActionsContainer>
-          <ActionButton>
-            <ActionIcon src={bookmarkIcon} alt="В закладки" />
-            {isOpen ? "Add to Bookmarks" : ""}
-          </ActionButton>
-          <ActionButton>
-            <ActionIcon src={moreIcon} alt="Еще" />
-          </ActionButton>
-        </UnderActionsContainer>
+      <ActionsContainer isPopup={isPopup}>
+        {isPopup ? (
+          <></>
+        ) : (
+          <>
+            <UnderActionsContainer>
+              <ActionButton>
+                <ActionIcon src={upIcon} alt="Лайк" />
+              </ActionButton>
+              <ActionButton>
+                <ActionIcon src={downIcon} alt="Дизлайк" />
+              </ActionButton>
+            </UnderActionsContainer>
+            <UnderActionsContainer>
+              <ActionButton 
+                active={isFavorite}
+                onClick={handleToggleFavorite}
+              >
+                <ActionIcon 
+                  src={isFavorite ? bookmarkFilledIcon : bookmarkIcon} 
+                  alt={isFavorite ? "Удалить из закладок" : "В закладки"} 
+                />
+                {isOpen ? (isFavorite ? "Remove from Bookmarks" : "Add to Bookmarks") : ""}
+              </ActionButton>
+              <ActionButton>
+                <ActionIcon src={moreIcon} alt="Еще" />
+              </ActionButton>
+            </UnderActionsContainer>
+          </>
+        )}
       </ActionsContainer>
     </PostContainer>
   );
 };
-const PostContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
+
+const PostContainer = styled.div<{
+  isOpen?: boolean;
+  search?: boolean;
+  isPopup?: boolean;
+}>`
   width: ${(props) => (props.isOpen || props.search ? "70%" : "350px")};
   margin: 20px auto;
   padding: 20px;
   border-radius: ${(props) => (props.search ? "0" : "8")};
   background-color: var(--bg-color);
-  border-bottom: ${(props) => (props.search ? "1px solid var(--border-color)" : "none")};
+  border-bottom: ${(props) =>
+    props.search ? "1px solid var(--border-color)" : "none"};
 `;
 
-const PostContentContainer = styled.div<{ isOpen?: boolean; search?: boolean }>`
+const PostContentContainer = styled.div<{
+  isOpen?: boolean;
+  search?: boolean;
+  isPopup?: boolean;
+}>`
   display: flex;
   flex-direction: ${(props) => (props.search ? "row" : "column")};
   gap: 20px;
@@ -117,7 +182,7 @@ const PostDescription = styled.p`
   line-height: 1.5;
 `;
 
-const ActionsContainer = styled.div`
+const ActionsContainer = styled.div<{ isPopup?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -125,11 +190,13 @@ const ActionsContainer = styled.div`
   padding-top: 15px;
   border-top: 1px solid #f0f0f0;
 `;
+
 const UnderActionsContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
 `;
+
 const ActionButton = styled.button<{ active?: boolean }>`
   background-color: ${(props) =>
     props.active ? "#007bff" : "var(--button-color)"};
