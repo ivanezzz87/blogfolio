@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import PostItem from "../components/Post";
-// import { Link } from "react-router-dom";
 import Title from "../components/Title";
 import TabsComponent from "../components/Tabs";
 import type { Tab } from "../components/Tabs";
@@ -68,7 +67,6 @@ const PostsPage: React.FC = () => {
       />
       <PostsGrid>
         {posts.map((post) => (
-          // <PostLink key={post.id} to={`/posts/${post.id}`}>
           <PostItem
             key={post.id}
             image={post.image}
@@ -76,7 +74,6 @@ const PostsPage: React.FC = () => {
             title={post.title}
             description={post.text}
           />
-          // </PostLink>
         ))}
       </PostsGrid>
       {posts.length > postsPerPage && (
