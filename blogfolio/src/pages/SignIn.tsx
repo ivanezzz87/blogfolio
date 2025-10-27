@@ -1,15 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Title from "../components/Title";
+import { useDispatch, useSelector } from "react-redux";
+import { login, clearError } from "../AuthSlice";
+import type { AppDispatch, RootState } from "../store/store";
+
 export const SignIn: React.FC = () => {
   const [formData, setData] = useState({
     email: "",
     password: "",
   });
+
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading, error, accessToken } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    // Очищаем ошибки при монтировании компонента
+    dispatch(clearError());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Если пользователь уже авторизован, перенаправляем на posts
+    if (accessToken) {
+      navigate("/posts");
+    }
+  }, [accessToken, navigate]);
+
   const handleInputChange = (field: string, value: string) => {
     setData((prevState) => ({
       ...prevState,
@@ -17,8 +37,26 @@ export const SignIn: React.FC = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    navigate("/posts");
+  const handleSubmit = async () => {
+    if (!formData.email || !formData.password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    const resultAction = await dispatch(login({
+      email: formData.email,
+      password: formData.password,
+    }));
+
+    if (login.fulfilled.match(resultAction)) {
+      navigate("/posts");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
   };
 
   return (
@@ -27,7 +65,7 @@ export const SignIn: React.FC = () => {
         <BackToHome as={Link} to="/">Back to home</BackToHome>
         <Title text="Sign in" />
       </HeaderContainer>
-      <Container>
+      <Container onKeyPress={handleKeyPress}>
         <Input
           type="email"
           value={formData.email}
@@ -44,20 +82,30 @@ export const SignIn: React.FC = () => {
           id="password"
           onChange={(value) => handleInputChange("password", value)}
         />
-        <a href="#">Forgot password?</a>
+        <ForgotPasswordLink href="#">Forgot password?</ForgotPasswordLink>
+        
+        {error && (
+          <ErrorMessage>
+            {typeof error === 'string' 
+              ? error 
+              : 'Login failed. Please check your credentials.'}
+          </ErrorMessage>
+        )}
+        
         <Button
-          content="Sign in"
+          content={isLoading ? "Signing in..." : "Sign in"}
           type="primary"
-          state="enabled"
+          state={isLoading ? "disabled" : "enabled"}
           onClick={handleSubmit}
         />
-        <span>
+        <SignUpText>
           Don't have an account? <StyledLink to="/signup">Sign up</StyledLink>
-        </span>
+        </SignUpText>
       </Container>
     </div>
   );
 };
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,13 +116,16 @@ const Container = styled.div`
   height: 500px;
   width: 500px;
   border: 1px solid lightgray;
+  padding: 40px;
 `;
+
 const BackToHome = styled(Link)`
   text-decoration: none;
   color: var(--link-color);
   font-size: 16px;
   margin-left: 10%;
 `;
+
 const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -83,6 +134,7 @@ const HeaderContainer = styled.div`
   padding: 20px;
   width: 100%;
 `;
+
 const StyledLink = styled(Link)`
   text-decoration: none;
   color: var(--link-color);
@@ -93,3 +145,36 @@ const StyledLink = styled(Link)`
     text-decoration: underline;
   }
 `;
+
+const ForgotPasswordLink = styled.a`
+  text-decoration: none;
+  color: var(--link-color);
+  font-size: 14px;
+  align-self: flex-start;
+  margin-left: 10px;
+  
+  &:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: #d32f2f;
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+  margin: 10px 0;
+`;
+
+const SignUpText = styled.span`
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+`;
+
+export default SignIn;

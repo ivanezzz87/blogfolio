@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+// src/pages/Signup.tsx
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Title from "../components/Title";
+import { useDispatch, useSelector } from "react-redux";
+import { register, clearError } from "../AuthSlice";
+import type { AppDispatch, RootState } from "../store/store";
+
 export const Signup: React.FC = () => {
   const [formData, setData] = useState({
     name: "",
@@ -11,7 +16,16 @@ export const Signup: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading, error } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    // Очищаем ошибки при монтировании компонента
+    dispatch(clearError());
+  }, [dispatch]);
+
   const handleInputChange = (field: string, value: string) => {
     setData((prevState) => ({
       ...prevState,
@@ -19,24 +33,43 @@ export const Signup: React.FC = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    navigate("/success");
+  const handleSubmit = async () => {
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    if (!formData.name || !formData.email || !formData.password) {
+      alert("All fields are required");
+      return;
+    }
+
+    const resultAction = await dispatch(register({
+      username: formData.name,
+      email: formData.email,
+      password: formData.password,
+      re_password: formData.confirmPassword,
+      course_group: 18,
+    }));
+
+    if (register.fulfilled.match(resultAction)) {
+      navigate("/success");
+    }
   };
 
   return (
     <div>
       <HeaderContainer>
         <BackToHome href="/">Back to home</BackToHome>
-        <Title text="Sign in" />
+        <Title text="Sign up" />
       </HeaderContainer>
       <Container>
         <Input
           type="text"
           value={formData.name}
           placeholder="Your name"
-          label="Email"
-          id="email"
-          onChange={(value) => handleInputChange("email", value)}
+          label="Name"
+          id="name"
+          onChange={(value) => handleInputChange("name", value)}
         />
         <Input
           type="email"
@@ -54,11 +87,21 @@ export const Signup: React.FC = () => {
           id="password"
           onChange={(value) => handleInputChange("password", value)}
         />
-        <a href="#">Forgot password?</a>
+        <Input
+          type="password"
+          value={formData.confirmPassword}
+          placeholder="Confirm password"
+          label="Confirm Password"
+          id="confirmPassword"
+          onChange={(value) => handleInputChange("confirmPassword", value)}
+        />
+        
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        
         <Button
-          content="Sign up"
+          content={isLoading ? "Loading..." : "Sign up"}
           type="primary"
-          state="enabled"
+          state={isLoading ? "disabled" : "enabled"}
           onClick={handleSubmit}
         />
         <span>
@@ -68,6 +111,7 @@ export const Signup: React.FC = () => {
     </div>
   );
 };
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -75,16 +119,19 @@ const Container = styled.div`
   justify-content: center;
   row-gap: 20px;
   margin: 0 auto;
-  height: 500px;
+  height: fit-content;
   width: 500px;
   border: 1px solid lightgray;
+  padding: 20px;
 `;
+
 const BackToHome = styled.a`
   text-decoration: none;
   color: var(--link-color);
   font-size: 16px;
   margin-left: 10%;
 `;
+
 const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -93,13 +140,22 @@ const HeaderContainer = styled.div`
   padding: 20px;
   width: 100%;
 `;
+
 const StyledLink = styled(Link)`
   text-decoration: none;
   color: var(--link-color);
   cursor: pointer;
-  
+
   &:hover {
     color: var(--link-hover-color);
     text-decoration: underline;
   }
 `;
+
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 14px;
+  text-align: center;
+`;
+
+export default Signup;

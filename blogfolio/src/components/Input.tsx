@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 interface IInput {
@@ -8,10 +8,11 @@ interface IInput {
   disabled?: boolean;
   label?: string;
   id?: string;
-  isError?: boolean;
-  textError?: string;
+  isError?: boolean; 
+  textError?: string; 
   onChange: (value: string) => void;
 }
+
 const Input: React.FC<IInput> = ({
   type,
   placeholder,
@@ -19,13 +20,71 @@ const Input: React.FC<IInput> = ({
   disabled = false,
   label,
   id,
-  isError = false,
-  textError,
+  isError: propIsError,
+  textError: propTextError,
   onChange,
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+  const [localIsError, setLocalIsError] = useState(false);
+  const [localTextError, setLocalTextError] = useState("");
+
+  const validate = (val: string) => {
+    if (disabled || val.trim() === "") {
+      return { isError: false, textError: "" };
+    }
+
+    switch (type) {
+      case "text":
+        if (val.length < 1) {
+          return { isError: true, textError: "Поле не может быть пустым" };
+        }
+        return { isError: false, textError: "" };
+
+      case "email":
+        { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(val)) {
+          return { isError: true, textError: "Неверный формат email" };
+        }
+        return { isError: false, textError: "" }; }
+
+      case "password":
+        if (val.length < 8) {
+          return { isError: true, textError: "Пароль должен быть минимум 8 символов" };
+        }
+        if (!/[A-Z]/.test(val)) {
+          return { isError: true, textError: "Пароль должен содержать заглавную букву" };
+        }
+        if (!/[a-z]/.test(val)) {
+          return { isError: true, textError: "Пароль должен содержать строчную букву" };
+        }
+        if (!/[0-9]/.test(val)) {
+          return { isError: true, textError: "Пароль должен содержать цифру" };
+        }
+        if (!/[!@#$%^&*]/.test(val)) {
+          return { isError: true, textError: "Пароль должен содержать специальный символ (!@#$ etc.)" };
+        }
+        return { isError: false, textError: "" };
+
+      default:
+        return { isError: false, textError: "" };
+    }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    onChange(newValue);
+    validate(newValue);
+  };
+
+  const handleBlur = () => {
+    const { isError, textError } = validate(value);
+    setLocalIsError(isError);
+    setLocalTextError(textError);
+  };
+
+
+  const finalIsError = propIsError !== undefined ? propIsError : localIsError;
+  const finalTextError = propTextError !== undefined ? propTextError : localTextError;
+
   return (
     <InputContainer>
       {label && (
@@ -40,12 +99,14 @@ const Input: React.FC<IInput> = ({
         value={value}
         disabled={disabled}
         onChange={handleChange}
-        $isError={isError}
+        onBlur={handleBlur}
+        $isError={finalIsError}
       />
-      {isError && textError && <Error>{textError}</Error>}
+      {finalIsError && finalTextError && <Error>{finalTextError}</Error>}
     </InputContainer>
   );
 };
+
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -53,6 +114,7 @@ const InputContainer = styled.div`
   width: fit-content;
   padding: 10px;
 `;
+
 const StyledLabel = styled.label<{ $disabled?: boolean }>`
   font-size: 14px;
   font-weight: 500;
@@ -60,6 +122,7 @@ const StyledLabel = styled.label<{ $disabled?: boolean }>`
   color: var(--text-color);
   cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
 `;
+
 const Error = styled.span`
   font-size: 12px;
   color: red;
@@ -93,4 +156,5 @@ const StyledInput = styled.input<{ $isError: boolean }>`
     color: #dadada;
   }
 `;
+
 export default Input;
