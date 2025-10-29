@@ -5,11 +5,12 @@ import Title from "../components/Title";
 import TabsComponent from "../components/Tabs";
 import type { Tab } from "../components/Tabs";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../store";
+import type { RootState, AppDispatch } from "../store/store";
 import { fetchPosts, setCurrentPage, clearError } from "../PostsSlice";
+
 const PostsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); 
-  const { posts, favorites, loading, error, currentPage, totalPages: totalPagesFromRedux } = useSelector((state: RootState) => state.posts);
+  const { posts, favorites, loading, currentPage, totalPages: totalPagesFromRedux } = useSelector((state: RootState) => state.posts);
 
   const [activeTab, setActiveTab] = useState<string>("all");
   const postsPerPage = 10; 
@@ -38,32 +39,31 @@ const PostsPage: React.FC = () => {
     dispatch(fetchPosts(params));
   }, [activeTab, currentPage, dispatch]);
 
-  if (loading && activeTab !== "favorites") {
-    return (
-      <PageContainer>
-        <LoadingSpinner>Загрузка...</LoadingSpinner>
-      </PageContainer>
-    );
-  }
-  
-switch (activeTab) {
-    case "favorites":
-        filteredPosts = favorites;
-        break;
-    case "popular":
-        filteredPosts = posts.filter(post => post.lesson_num && post.lesson_num > 105);
-        break;
-    default:
-        filteredPosts = posts;
-}
-  
+  const getFilteredPosts = () => {
+    switch (activeTab) {
+      case "favorites":
+        return favorites;
+      case "popular":
+        return posts.filter(post => post.lesson_num && post.lesson_num > 105);
+      default:
+        return posts;
+    }
+  };
+
+  const filteredPosts = getFilteredPosts();
+
   const totalPages = activeTab === "favorites"
     ? Math.ceil(favorites.length / postsPerPage)
     : totalPagesFromRedux;
 
-  const currentPosts = activeTab === "favorites"
-    ? favorites.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage)
-    : posts;
+  const currentPosts = filteredPosts.slice(
+    (currentPage - 1) * postsPerPage, 
+    currentPage * postsPerPage
+  );
+
+  const postsCount = activeTab === "favorites" 
+    ? favorites.length 
+    : posts.length;
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -83,6 +83,14 @@ switch (activeTab) {
     dispatch(setCurrentPage(pageNumber));
     window.scrollTo(0, 0);
   };
+
+  if (loading && activeTab !== "favorites") {
+    return (
+      <PageContainer>
+        <LoadingSpinner>Загрузка...</LoadingSpinner>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
@@ -114,7 +122,7 @@ switch (activeTab) {
         </PostsGrid>
       )}
       
-      { (activeTab !== "favorites" ? posts.length : favorites.length) > 0 && totalPages > 1 && (
+      {postsCount > 0 && totalPages > 1 && (
         <PaginationContainer>
           <PaginationButton
             onClick={handlePrevPage}
@@ -148,6 +156,7 @@ switch (activeTab) {
     </PageContainer>
   );
 };
+
 const PageContainer = styled.div`
   background-color: var(--bg-color);
 `;
@@ -170,15 +179,6 @@ const LoadingSpinner = styled.div`
   height: 200px;
   font-size: 1.2em;
   color: #666;
-`;
-
-const ErrorMessage = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  font-size: 1.2em;
-  color: red;
 `;
 
 const PaginationContainer = styled.div`

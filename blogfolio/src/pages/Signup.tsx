@@ -1,4 +1,3 @@
-// src/pages/Signup.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
@@ -35,11 +34,11 @@ export const Signup: React.FC = () => {
 
   const handleSubmit = async () => {
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      alert("Пароли не совпадают");
       return;
     }
     if (!formData.name || !formData.email || !formData.password) {
-      alert("All fields are required");
+      alert("Заполните все обязательные поля");
       return;
     }
 
